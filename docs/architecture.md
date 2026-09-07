@@ -49,6 +49,7 @@ amplifier enable; cleanup lowers it even when playback fails or times out.
 
 ### Local planner
 
+- start with Gemma 3 270M IT as the latency baseline, then test 1B if needed;
 - benchmark a 0.5–1B quantized model on the Pi before selecting one;
 - require strict JSON matching `schemas/intent.schema.json`;
 - keep reflexes and STOP below the model layer;

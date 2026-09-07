@@ -8,10 +8,12 @@ from pathlib import Path
 
 from .audio import AUDIO_OVERLAY, Speaker, apply_audio_overlay, configured_text
 from .controller import ActionController, RecordingActuator
+from .evaluation import evaluate_cases, load_cases
 from .hardware import RobotHat, reset_hat_mcu
 from .heartbeat import Heartbeat, ReflexPlanner, StaticObserver
 from .intent import Action, Intent
 from .memory import MemoryStore
+from .planner import LlamaServerPlanner
 from .sensors import (
     BatterySensor,
     KNOWN_ULTRASONIC_PAIRS,
@@ -49,6 +51,24 @@ def _parser() -> argparse.ArgumentParser:
     speak.add_argument("--voice", default="en")
     speak.add_argument("--confirm-audio", action="store_true")
     speak.add_argument("--db", type=Path, default=Path("data/squirrel.db"))
+
+    planner = sub.add_parser("planner-smoke", help="query a loopback llama.cpp planner")
+    planner.add_argument("--endpoint", default="http://127.0.0.1:8080")
+    planner.add_argument("--model", default="ggml-org/gemma-3-270m-it-GGUF:Q8_0")
+    planner.add_argument(
+        "--state",
+        default='{"battery_status":"ok","battery_v":7.4,"low_battery":false,"ultrasonic_status":"ok","distance_cm":30,"boredom":0.7}',
+        help="public world-state JSON object",
+    )
+
+    planner_eval = sub.add_parser(
+        "planner-eval", help="run bounded cases against a loopback llama.cpp planner"
+    )
+    planner_eval.add_argument("--endpoint", default="http://127.0.0.1:8080")
+    planner_eval.add_argument("--model", default="ggml-org/gemma-3-270m-it-GGUF:Q8_0")
+    planner_eval.add_argument(
+        "--cases", type=Path, default=Path("benchmarks/planner_cases.json")
+    )
 
     move = sub.add_parser("move", help="run one bounded physical action")
     move.add_argument("action", choices=["stand", "tiny-wiggle", "stop"])
@@ -184,6 +204,36 @@ def main(argv: list[str] | None = None) -> int:
             return 0 if result == "succeeded" else 1
         finally:
             memory.close()
+
+    if args.command == "planner-smoke":
+        try:
+            state = json.loads(args.state)
+        except json.JSONDecodeError as exc:
+            print(json.dumps({"error": f"invalid --state JSON: {exc}"}))
+            return 2
+        if not isinstance(state, dict):
+            print(json.dumps({"error": "--state must be a JSON object"}))
+            return 2
+        planner = LlamaServerPlanner(endpoint=args.endpoint, model=args.model)
+        intent = planner.plan(state)
+        print(
+            json.dumps(
+                {"intent": intent.public_record(), "planner": planner.diagnostics()},
+                indent=2,
+            )
+        )
+        return 0 if planner.diagnostics()["status"] in {"ok", "reflex"} else 1
+
+    if args.command == "planner-eval":
+        try:
+            cases = load_cases(args.cases)
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
+            print(json.dumps({"error": f"invalid planner cases: {exc}"}))
+            return 2
+        planner = LlamaServerPlanner(endpoint=args.endpoint, model=args.model)
+        report = evaluate_cases(planner, cases)
+        print(json.dumps(report, indent=2))
+        return 0 if report["passed"] else 1
 
     if args.command == "move":
         if not args.confirm_motion:

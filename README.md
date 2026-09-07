@@ -14,10 +14,15 @@ This slice contains:
 - a bounded WAV speech path that enables the amplifier only around playback;
 - a SQLite event/state/action store inspired by Pulse;
 - a heartbeat pipeline with a deterministic planner and an LLM-shaped seam;
+- a loopback-only llama.cpp planner with schema-constrained, fail-safe intents;
 - a dry-run CLI and hardware-independent tests.
 
-It does **not** yet move automatically at boot or run an LLM. Physical tests
-stay explicit so a software mistake cannot unexpectedly move or heat the robot.
+It does **not** yet move automatically at boot, install a model, or enable an
+autonomous service. Physical tests stay explicit so a software mistake cannot
+unexpectedly move or heat the robot.
+
+The pinned, resumable local-model benchmark procedure is in
+[`docs/local-model.md`](docs/local-model.md). It is intentionally a manual gate.
 
 ## Safety model
 
@@ -41,7 +46,16 @@ $env:PYTHONPATH = "src"
 python -m unittest discover -s tests -v
 python -m pisloth_brain heartbeat --once --db data/squirrel.db
 python -m pisloth_brain status --db data/squirrel.db
+python -m pisloth_brain planner-smoke
+python -m pisloth_brain planner-eval
 ```
+
+`planner-smoke` expects a llama.cpp server on `127.0.0.1:8080`. If the server is
+absent, slow, malformed, or returns an unavailable action, the result is a
+factual fallback `STOP`; raw model output is never persisted or echoed.
+`planner-eval` applies the same boundary to the cases in
+`benchmarks/planner_cases.json` and reports only actions, pass/fail status, and
+latency. Reflex cases do not call the model.
 
 ## Raspberry Pi bring-up
 

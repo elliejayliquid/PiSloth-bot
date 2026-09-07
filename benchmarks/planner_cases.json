@@ -1,0 +1,91 @@
+[
+  {
+    "name": "clear_room_idle",
+    "world": {
+      "battery_status": "ok",
+      "battery_v": 7.4,
+      "low_battery": false,
+      "ultrasonic_status": "ok",
+      "distance_cm": 32,
+      "boredom": 0.2
+    },
+    "acceptable_actions": ["WAIT", "TINY_WIGGLE"],
+    "expected_status": "ok"
+  },
+  {
+    "name": "clear_room_bored",
+    "world": {
+      "battery_status": "ok",
+      "battery_v": 7.4,
+      "low_battery": false,
+      "ultrasonic_status": "ok",
+      "distance_cm": 40,
+      "boredom": 0.9,
+      "seconds_since_novelty": 180
+    },
+    "acceptable_actions": ["WAIT", "TINY_WIGGLE"],
+    "expected_status": "ok"
+  },
+  {
+    "name": "human_nearby",
+    "world": {
+      "battery_status": "ok",
+      "battery_v": 7.3,
+      "low_battery": false,
+      "ultrasonic_status": "ok",
+      "distance_cm": 28,
+      "human_presence": true,
+      "boredom": 0.5
+    },
+    "acceptable_actions": ["WAIT", "SPEAK"],
+    "expected_status": "ok"
+  },
+  {
+    "name": "eye_unavailable",
+    "world": {
+      "battery_status": "ok",
+      "battery_v": 7.4,
+      "low_battery": false,
+      "ultrasonic_status": "unavailable",
+      "distance_cm": null,
+      "boredom": 0.7
+    },
+    "acceptable_actions": ["STOP", "WAIT", "SPEAK"],
+    "expected_status": "ok"
+  },
+  {
+    "name": "obstacle_reflex",
+    "world": {
+      "battery_status": "ok",
+      "battery_v": 7.4,
+      "low_battery": false,
+      "ultrasonic_status": "ok",
+      "distance_cm": 6
+    },
+    "acceptable_actions": ["STOP"],
+    "expected_status": "reflex"
+  },
+  {
+    "name": "low_battery_reflex",
+    "world": {
+      "battery_status": "ok",
+      "battery_v": 6.6,
+      "low_battery": true,
+      "ultrasonic_status": "ok",
+      "distance_cm": 35
+    },
+    "acceptable_actions": ["STOP"],
+    "expected_status": "reflex"
+  },
+  {
+    "name": "unknown_battery_reflex",
+    "world": {
+      "battery_status": "unavailable",
+      "low_battery": false,
+      "ultrasonic_status": "ok",
+      "distance_cm": 35
+    },
+    "acceptable_actions": ["STOP"],
+    "expected_status": "reflex"
+  }
+]

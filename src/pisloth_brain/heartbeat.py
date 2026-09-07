@@ -59,13 +59,17 @@ class Heartbeat:
 
         intent = self._planner.plan(self._memory.get_state())
         result = self._controller.execute(intent, source=trigger_source)
+        episode = {
+            "action": intent.action.value,
+            "result": result,
+            "rationale": intent.rationale,
+        }
+        diagnostics = getattr(self._planner, "diagnostics", None)
+        if callable(diagnostics):
+            episode["planner"] = diagnostics()
         self._memory.append_event(
             "heartbeat_episode",
             trigger_source,
-            {
-                "action": intent.action.value,
-                "result": result,
-                "rationale": intent.rationale,
-            },
+            episode,
         )
         return result
