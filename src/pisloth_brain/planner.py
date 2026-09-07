@@ -189,7 +189,9 @@ class LlamaServerPlanner:
             "stream": False,
             "reasoning_effort": "none",
             "chat_template_kwargs": {"enable_thinking": False},
-            "response_format": {"type": "json_schema", "schema": schema},
+            # llama.cpp accepts both json_schema and json_object here. The latter
+            # consistently applies the supplied schema with Gemma 3 270M on ARM64.
+            "response_format": {"type": "json_object", "schema": schema},
         }
 
     @staticmethod

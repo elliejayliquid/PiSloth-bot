@@ -53,6 +53,7 @@ class PlannerTests(unittest.TestCase):
         self.assertEqual(intent.action, Action.TINY_WIGGLE)
         self.assertEqual(planner.diagnostics()["status"], "ok")
         payload = transport.calls[0][1]
+        self.assertEqual(payload["response_format"]["type"], "json_object")
         self.assertEqual(
             payload["response_format"]["schema"]["additionalProperties"], False
         )
