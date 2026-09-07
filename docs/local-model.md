@@ -91,6 +91,32 @@ promoted as the final autonomous driver because it did not reliably express the
 curiosity behavior. The temporary server was stopped and no service was enabled.
 Gemma 3 1B is the next candidate if a larger download is approved.
 
+## Recorded Gemma 3 1B result — 2026-09-07
+
+The approved 1B comparison used `gemma-3-1b-it-Q4_K_M.gguf`:
+
+- exact size: 806,058,240 bytes;
+- SHA256: `8ccc5cd1f1b3602548715ae25a66ed73fd5dc68a210412eea643eb20eb75a135`;
+- model load time: about 3.3 seconds;
+- initial server RSS: about 862 MiB;
+- active server RSS after evaluation: about 941 MiB;
+- swap use: 0 bytes;
+- all four model calls exceeded the 20-second planner timeout and safely fell
+  back to `STOP`;
+- only the three deterministic reflex cases passed, for 3/7 overall;
+- peak observed temperature: 78.8 C;
+- temperature three seconds after stopping the server: 60.8 C.
+
+`vcgencmd get_throttled` reported `0xd0000`: only historical bits were set
+(undervoltage, throttling, and soft temperature limit have occurred), with no
+current-condition bits set. The same historical value had already been observed
+after the earlier 270M run, so it cannot be attributed specifically to 1B.
+
+Conclusion: the 1B model fits in memory but is too slow and hot for this planner
+on the current passively cooled robot. It remains downloaded for possible future
+cooling or optimization experiments, but must not be used by default. Its
+temporary server was stopped and no service was enabled.
+
 ## Sources
 
 - Gemma setup and model sizing: https://ai.google.dev/gemma/docs/get_started
