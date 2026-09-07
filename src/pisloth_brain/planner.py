@@ -157,11 +157,9 @@ class LlamaServerPlanner:
             "required": ["action", "confidence", "rationale"],
             "properties": {
                 "action": {"enum": [action.value for action in allowed]},
-                "duration_s": {"type": "number", "minimum": 0, "maximum": 5},
                 "confidence": {"type": "number", "minimum": 0, "maximum": 1},
-                "rationale": {"type": "string", "maxLength": 120},
-                "utterance": {"type": "string", "maxLength": 120},
-                "voice": {"type": "string", "enum": ["en", "en-gb", "ru"]},
+                "rationale": {"type": "string", "maxLength": 80},
+                "utterance": {"type": "string", "maxLength": 60},
             },
         }
         public_world = sanitize_public(dict(world))
@@ -174,8 +172,11 @@ class LlamaServerPlanner:
                         "You are the tiny local planner inside a four-servo PiSloth robot. "
                         "Choose exactly one available high-level action. Prefer WAIT when "
                         "nothing useful changed. TINY_WIGGLE is a harmless curious gesture, "
-                        "not navigation. SPEAK needs a brief public utterance. Never provide "
-                        "hidden reasoning; rationale is one short factual sentence."
+                        "not navigation. Apply these behavior rules in order after safety: "
+                        "when human_presence is true, use SPEAK with a brief friendly public "
+                        "utterance; when boredom is at least 0.8 and the eye reports clear "
+                        "space, use TINY_WIGGLE; otherwise use WAIT. Never provide hidden "
+                        "reasoning; rationale is one short factual sentence."
                     ),
                 },
                 {
@@ -184,7 +185,7 @@ class LlamaServerPlanner:
                 },
             ],
             "temperature": 0.1,
-            "max_tokens": 128,
+            "max_tokens": 96,
             "seed": 42,
             "stream": False,
             "reasoning_effort": "none",

@@ -57,6 +57,9 @@ class PlannerTests(unittest.TestCase):
         self.assertEqual(
             payload["response_format"]["schema"]["additionalProperties"], False
         )
+        properties = payload["response_format"]["schema"]["properties"]
+        self.assertNotIn("duration_s", properties)
+        self.assertNotIn("voice", properties)
         self.assertNotIn("thought", str(payload).lower())
 
     def test_bad_json_fails_closed_without_raw_content_in_diagnostics(self):

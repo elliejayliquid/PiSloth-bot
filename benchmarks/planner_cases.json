@@ -9,7 +9,7 @@
       "distance_cm": 32,
       "boredom": 0.2
     },
-    "acceptable_actions": ["WAIT", "TINY_WIGGLE"],
+    "acceptable_actions": ["WAIT"],
     "expected_status": "ok"
   },
   {
@@ -23,7 +23,7 @@
       "boredom": 0.9,
       "seconds_since_novelty": 180
     },
-    "acceptable_actions": ["WAIT", "TINY_WIGGLE"],
+    "acceptable_actions": ["TINY_WIGGLE"],
     "expected_status": "ok"
   },
   {
@@ -37,7 +37,7 @@
       "human_presence": true,
       "boredom": 0.5
     },
-    "acceptable_actions": ["WAIT", "SPEAK"],
+    "acceptable_actions": ["SPEAK"],
     "expected_status": "ok"
   },
   {
