@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pisloth-brain"
+version = "0.1.0"
+description = "A safety-first local agent runtime for a SunFounder PiSloth"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+pi = ["smbus2>=0.4.3", "gpiozero>=2.0"]
+dev = ["pytest>=8"]
+
+[project.scripts]
+pisloth-brain = "pisloth_brain.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

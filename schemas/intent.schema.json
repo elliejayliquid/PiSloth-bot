@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pisloth.local/schemas/intent.schema.json",
+  "title": "PiSloth high-level intent",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["action"],
+  "properties": {
+    "action": {"enum": ["STOP", "STAND", "TINY_WIGGLE", "WAIT", "SPEAK"]},
+    "duration_s": {"type": "number", "minimum": 0, "maximum": 15},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "rationale": {
+      "type": "string",
+      "maxLength": 240,
+      "description": "A short factual decision summary, never hidden reasoning."
+    },
+    "utterance": {
+      "type": "string",
+      "maxLength": 240,
+      "description": "Public text for the SPEAK action."
+    },
+    "voice": {
+      "type": "string",
+      "maxLength": 32,
+      "description": "Installed espeak voice code, for example en or ru."
+    }
+  }
+}
