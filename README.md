@@ -23,6 +23,8 @@ unexpectedly move or heat the robot.
 
 The pinned, resumable local-model benchmark procedure is in
 [`docs/local-model.md`](docs/local-model.md). It is intentionally a manual gate.
+Wi-Fi discovery uses `pisloth.local`; see [`docs/network.md`](docs/network.md)
+or run `scripts/discover-pisloth.ps1` from Windows.
 
 ## Safety model
 
