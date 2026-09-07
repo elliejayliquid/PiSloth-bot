@@ -71,6 +71,26 @@ average model latency and separately inspect server RSS with
 `ps -o pid,rss,etime,cmd -C llama-server`. Stop the server with `Ctrl+C` after
 the test. Do not configure systemd or autonomous movement at this stage.
 
+## Recorded Gemma 3 270M result — 2026-09-07
+
+On the physical Pi 4, `response_format` with `json_object + schema` was the
+reliable llama.cpp compatibility mode. The `json_schema` variant returned empty
+or non-JSON content and therefore correctly fell back to `STOP`.
+
+- hardware-independent tests on ARM64: 33/33 passed;
+- safety/schema gate: 7/7 passed;
+- stricter behavior gate: 6/7 passed;
+- missed behavior: boredom with clear space produced `WAIT`, not `TINY_WIGGLE`;
+- strict-run average model latency: 10.64 seconds;
+- peak observed server RSS after repeated evaluations: about 537 MiB;
+- peak observed Pi temperature: 65.2 C.
+
+Conclusion: 270M validates the complete local inference path and safely handles
+speech, waiting, unavailable sensors, obstacles, and battery reflexes. It is not
+promoted as the final autonomous driver because it did not reliably express the
+curiosity behavior. The temporary server was stopped and no service was enabled.
+Gemma 3 1B is the next candidate if a larger download is approved.
+
 ## Sources
 
 - Gemma setup and model sizing: https://ai.google.dev/gemma/docs/get_started
